@@ -2,6 +2,7 @@ import { Box, Container, Grid } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
 import Square from "./Square";
+import List from "./List";
 
 const App = () => {
   const [state, setState] = useImmer({
@@ -16,11 +17,11 @@ const App = () => {
       { type: "product", id: 8, name: "ProductH", position: [0, 7] },
       { type: "product", id: 9, name: "ProductI", position: [1, 0] },
       { type: "product", id: 10, name: "ProductJ", position: [1, 1] },
-      { type: "product", id: 11, name: "Productk", position: [1, 2] },
     ],
+    garbage: [{ type: "product", id: 11, name: "Productk", position: [0, 0] }],
   });
 
-  function renderSquare(i, items) {
+  function renderSquare(i, state) {
     const x = Math.floor(i / 8);
     const y = i % 8;
     return (
@@ -29,7 +30,8 @@ const App = () => {
         i={i}
         x={x}
         y={y}
-        products={items}
+        products={state.items}
+        garbage={state.garbage}
         setProduct={setState}
       />
     );
@@ -37,7 +39,7 @@ const App = () => {
 
   const squares = [];
   for (let i = 0; i < 44; i++) {
-    squares.push(renderSquare(i, state.items));
+    squares.push(renderSquare(i, state));
   }
 
   return (
@@ -45,7 +47,14 @@ const App = () => {
       maxWidth={false}
       sx={{ bgcolor: "#cfe8fc", height: "100vh", paddingTop: "20px" }}
     >
-      <Grid container>{squares}</Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={8}>
+          <Grid container>{squares}</Grid>
+        </Grid>
+        <Grid item xs={4}>
+          <List setProduct={setState} products={state.garbage} />
+        </Grid>
+      </Grid>
     </Container>
   );
 };

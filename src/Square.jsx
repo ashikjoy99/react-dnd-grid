@@ -3,18 +3,33 @@ import React, { Children } from "react";
 import { useDrop } from "react-dnd";
 import Product from "./Product";
 
-const Square = ({ i, x, y, products, setProduct }) => {
+const Square = ({ i, x, y, products, setProduct, garbage }) => {
   const moveProduct = (x, y, item, prds) => {
-    const updatedProducts = prds.map((prd) => {
-      if (prd.id === item.productId) {
-        return { ...prd, position: [x, y] };
-      } else {
-        return prd;
-      }
-    });
-    setProduct((draft) => {
-      draft.items = updatedProducts;
-    });
+    if (item.type === "garbage") {
+      setProduct((draft) => {
+        draft.items = [
+          ...draft.items,
+          {
+            ...draft.garbage.find((prd) => prd.id === item.productId),
+            position: [x, y],
+          },
+        ];
+        draft.garbage = draft.garbage.filter(
+          (prd) => prd.id !== item.productId
+        );
+      });
+    } else {
+      const updatedProducts = prds.map((prd) => {
+        if (prd.id === item.productId) {
+          return { ...prd, position: [x, y] };
+        } else {
+          return prd;
+        }
+      });
+      setProduct((draft) => {
+        draft.items = updatedProducts;
+      });
+    }
   };
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
@@ -45,7 +60,7 @@ const Square = ({ i, x, y, products, setProduct }) => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "30px 50px",
+          padding: "10px",
           minHeight: "50px",
         }}
       >
