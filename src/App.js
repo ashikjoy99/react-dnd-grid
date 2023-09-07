@@ -21,6 +21,18 @@ const App = () => {
     garbage: [{ type: "product", id: 11, name: "Productk", position: [0, 0] }],
   });
 
+  const indices = state.items.map((item) => {
+    const offset = item.position[0] * 8;
+    const orderNumber = item.position[1];
+    return { ...item, index: offset + orderNumber };
+  });
+
+  // indices.sort((a, b) => {
+  //   return a.index - b.index;
+  // });
+
+  console.log("indexes", indices);
+
   function renderSquare(i, state) {
     const x = Math.floor(i / 8);
     const y = i % 8;
